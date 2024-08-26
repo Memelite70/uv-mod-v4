@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+      <link rel="stylesheet" href="css/general.css">
+      <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+   </head>
+   <body style='font-family: "Poppins", sans-serif;'>
+      <div id="header">
+         
+      </div> 
+      <div id="content">
+
+         <form class="searchbar" id="uv-form">
+            <h1>Proxy &middot; Geometry Tryhard</h1>
+            <h2>Search the web with Google</h2>
+            <input id="uv-search-engine" value="https://www.google.com/search?q=%s" type="hidden"/> 
+            <input id="uv-address" class="search-bar" type="text" placeholder="  Search Google or type an URL" class="form__input"/>
+            <h3>To make the proxy function, once you input your search, if the screen goes white, right-click the screen and select reload/refresh frame. You should only need to do this once.</h3>
+          </form>
+
+      </div>
+      <script src="uv/uv.bundle.js" defer></script>
+      <script src="uv/uv.config.js" defer></script>
+      <script src="register-sw.js" defer></script>
+      <script src="search.js" defer></script>
+      <script src="index.js" defer></script>
+      <center><div style='font-family: "Poppins", sans-serif;' class="credits">
+<h4>Credits to TIW for making <a href="https://github.com/TheTIW/UV-Static/tree/main/static" target="_blank">UV Static</a>, which I modded to redirect and used their search.js.
+<br>
+ Credits to TopVaz for owning the server. This is simply a redirect.</h4></div></center>
+   </body>
+</html>
