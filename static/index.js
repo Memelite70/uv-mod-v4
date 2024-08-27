@@ -34,6 +34,6 @@ function getRandomUpTo(max) {
  return Math.floor(Math.random() * Math.floor(max)) + 1;
 }
   const url = search(address.value, searchEngine.value);
-  location.href = '//dont-sue-me-topvaz.topvazgeo.online/launch.html?domain=' + url;
+  location.href = '//' + localStorage.getItem('server-node') + '/launch.html?domain=' + url;
 
 });
