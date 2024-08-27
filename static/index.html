@@ -1,37 +1,132 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-      <link rel="stylesheet" href="css/general.css">
-      <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
-      <script src="index.js"></script>
-      <script src="server.js"></script>
-   </head>
-   <body style='font-family: "Poppins", sans-serif;'>
-      <div id="header">
-         
-      </div> 
-      <div id="content">
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+   <link rel="stylesheet" href="css/general.css">
+   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+   <script src="server.js"></script>
+</head>
+<body style='font-family: "Poppins", sans-serif;'>
+   <div id="header"></div> 
+   <div id="content">
 
-         <form class="searchbar" id="uv-form">
-            <h1>Proxy &middot; Geometry Tryhard</h1>
-            <h2>Search the web with Google</h2>
-            <input id="uv-search-engine" value="https://www.google.com/search?q=%s" type="hidden"/> 
-            <input id="uv-address" class="search-bar" type="text" placeholder="  Search Google or type an URL" class="form__input"/>
-            <h3>To make the proxy function, once you input your search, if the screen goes white, right-click the screen and select reload/refresh frame. You should only need to do this once.</h3>
-          </form>
+      <form class="searchbar" id="uv-form">
+         <h1>Proxy &middot; Geometry Tryhard</h1>
+         <h2>Search the web with Google</h2>
+         <input id="uv-search-engine" value="https://www.google.com/search?q=%s" type="hidden"/> 
+         <input id="uv-address" class="search-bar" type="text" placeholder="  Search Google or type a URL" class="form__input"/>
+         <h3>To make the proxy function, once you input your search, if the screen goes white, right-click the screen and select reload/refresh frame. You should only need to do this once.</h3>
+         <p id="uv-error" style="color: red;"></p>
+         <pre id="uv-error-code" style="color: red;"></pre>
+      </form>
 
-      </div>
-      <script src="uv/uv.bundle.js" defer></script>
-      <script src="uv/uv.config.js" defer></script>
-      <script src="register-sw.js" defer></script>
+   </div>
+   <script>
+   "use strict";
 
+   // Search function to convert input into a fully qualified URL or search query
+   /**
+    *
+    * @param {string} input
+    * @param {string} template Template for a search query.
+    * @returns {string} Fully qualified URL
+    */
+   function search(input, template) {
+      if (!input || typeof input !== 'string') {
+         console.error("Invalid input: Input must be a non-empty string.");
+         return "";
+      }
+
+      try {
+         // Input is a valid URL:
+         return new URL(input).toString();
+      } catch (err) {
+         console.error("Invalid URL:", err);
+      }
+
+      try {
+         // Input is a valid URL when http:// is added to the start:
+         const url = new URL(`http://${input}`);
+         // Only if the hostname has a TLD/subdomain
+         if (url.hostname.includes(".")) return url.toString();
+      } catch (err) {
+         console.error("Invalid URL with http://:", err);
+      }
+
+      // Attempts to convert the input to a fully qualified URL have failed
+      // Treat the input as a search query
+      return template.replace("%s", encodeURIComponent(input));
+   }
+
+   /**
+    * @type {HTMLFormElement}
+    */
+   const form = document.getElementById("uv-form");
+   /**
+    * @type {HTMLInputElement}
+    */
+   const address = document.getElementById("uv-address");
+   /**
+    * @type {HTMLInputElement}
+    */
+   const searchEngine = document.getElementById("uv-search-engine");
+   /**
+    * @type {HTMLParagraphElement}
+    */
+   const error = document.getElementById("uv-error");
+   /**
+    * @type {HTMLPreElement}
+    */
+   const errorCode = document.getElementById("uv-error-code");
+
+   form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      try {
+         await registerSW();
+      } catch (err) {
+         error.textContent = "Failed to register service worker.";
+         errorCode.textContent = err.toString();
+         return; // Early exit
+      }
+
+      const domain = localStorage.getItem('domain');
+      const servernode = localStorage.getItem('server-node');
+
+      // Check if domain and servernode are not null
+      if (!domain || !servernode) {
+         error.textContent = "Domain or server node is missing.";
+         return; // Early exit
+      }
+
+      const url = search(address.value, searchEngine.value);
       
-      <center><div style='font-family: "Poppins", sans-serif;' class="credits">
-<h4>Credits to TIW for making <a href="https://github.com/TheTIW/UV-Static/tree/main/static" target="_blank">UV Static</a>, which I modded to redirect and used their search.js.
-<br>
- Credits to TopVaz for owning the server. This is simply a redirect.</h4></div></center>
-   </body>
+      // Verify if the URL is valid before constructing the redirect
+      if (!url) {
+         error.textContent = "Invalid search query.";
+         return; // Early exit
+      }
+      
+      location.href = '//' + servernode + domain + url;
+   });
+
+   // Function defined outside the event listener
+   function getRandomUpTo(max) {
+      return Math.floor(Math.random() * Math.floor(max)) + 1;
+   }
+   </script>
+   <script src="uv/uv.bundle.js" defer></script>
+   <script src="uv/uv.config.js" defer></script>
+   <script src="register-sw.js" defer></script>
+
+   <center>
+      <div style='font-family: "Poppins", sans-serif;' class="credits">
+         <h4>Credits to TIW for making <a href="https://github.com/TheTIW/UV-Static/tree/main/static" target="_blank">UV Static</a>, which I modded to redirect and used their search.js.
+         <br>
+         Credits to TopVaz for owning the server. This is simply a redirect.</h4>
+      </div>
+   </center>
+</body>
 </html>
