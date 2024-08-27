@@ -36,9 +36,25 @@
    if (typeof server === 'undefined' || server === null) {
       getServer();
    }
- function inputServer() {
+function inputServer() {
    var servernode1 = prompt("Variable 1 (1 through 1000000000000)");
    var domain1 = prompt("Variable 2 (1 through 8)");
+
+   // Convert domain1 to a number
+   domain1 = parseInt(domain1, 10);
+
+   // Validate servernode1
+   if (isNaN(servernode1) || servernode1 < 1 || servernode1 > 1000000000000) {
+      alert("Please enter a valid number for Variable 1 (1 through 1000000000000).");
+      return; // Exit the function if input is invalid
+   }
+
+   // Validate domain1
+   if (isNaN(domain1) || domain1 < 1 || domain1 > 8) {
+      alert("Please enter a valid number for Variable 2 (1 through 8).");
+      return; // Exit the function if input is invalid
+   }
+
    switch (domain1) {
       case 1:
          localStorage.setItem('domain', '.topvazgeo.online/launch.html?domain=');
@@ -65,6 +81,7 @@
          localStorage.setItem('domain', '.tvazgeo.online/launch.html?domain=');
          break;
       default:
+         alert("Invalid domain selection. Setting to default domain.");
          localStorage.setItem('domain', '.topvazgeo.online/launch.html?domain=');
          break;
    }
