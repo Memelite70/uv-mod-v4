@@ -26,13 +26,52 @@
    <script>
    "use strict";
 
+   // Functions for generating random numbers
+   function getRandom(max) {
+      return Math.floor(Math.random() * Math.floor(max)) + 1;
+   }
+
+   // Check if server-node is not set in localStorage
+   var server = localStorage.getItem('server-node');
+   if (typeof server === 'undefined' || server === null) {
+      getServer();
+   }
+
+   function getServer() {
+      localStorage.setItem('server-node', getRandom(1000000000000));
+      var header = getRandom(8);
+      switch (header) {
+         case 1:
+            localStorage.setItem('domain', '.topvazgeo.online/launch.html?domain=');
+            break;
+         case 2:
+            localStorage.setItem('domain', '.topvazgeo.site/launch.html?domain=');
+            break;
+         case 3:
+            localStorage.setItem('domain', '.mathsblog.online/launch.html?domain=');
+            break;
+         case 4:
+            localStorage.setItem('domain', '.mathematicstopvaz.site/launch.html?domain=');
+            break;
+         case 5:
+            localStorage.setItem('domain', '.topvazgeometry.online/launch.html?domain=');
+            break;
+         case 6:
+            localStorage.setItem('domain', '.tvazgeometry.online/launch.html?domain=');
+            break;
+         case 7:
+            localStorage.setItem('domain', '.tvazgeo.site/launch.html?domain=');
+            break;
+         case 8:
+            localStorage.setItem('domain', '.tvazgeo.online/launch.html?domain=');
+            break;
+         default:
+            localStorage.setItem('domain', '.topvazgeo.online/launch.html?domain=');
+            break;
+      }
+   }
+
    // Search function to convert input into a fully qualified URL or search query
-   /**
-    *
-    * @param {string} input
-    * @param {string} template Template for a search query.
-    * @returns {string} Fully qualified URL
-    */
    function search(input, template) {
       if (!input || typeof input !== 'string') {
          console.error("Invalid input: Input must be a non-empty string.");
@@ -97,8 +136,7 @@
 
       // Check if domain and servernode are not null
       if (!domain || !servernode) {
-         error.textContent = "Domain or server node is missing.";
-         return; // Early exit
+         getServer(); //get server
       }
 
       const url = search(address.value, searchEngine.value);
@@ -111,11 +149,6 @@
       
       location.href = '//' + servernode + domain + url;
    });
-
-   // Function defined outside the event listener
-   function getRandomUpTo(max) {
-      return Math.floor(Math.random() * Math.floor(max)) + 1;
-   }
    </script>
    <script src="uv/uv.bundle.js" defer></script>
    <script src="uv/uv.config.js" defer></script>
